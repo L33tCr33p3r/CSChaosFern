@@ -43,15 +43,15 @@ namespace CSChaosFern.Source {
             RenderWindow window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), "CSChaosFern");
             window.Closed += new EventHandler(OnClose);
 
+            Image image = new Image(WIDTH, HEIGHT);
+            Texture buffer = new Texture(WIDTH, HEIGHT);
+            Sprite sprite = new Sprite(buffer);
+
             Vector2f OFFSET = -NextCoord(new Vector2f(0, 0));
+            Color COLOR = new Color(0x44, 0xaa, 0x22);
             
             Vector2f point = new Vector2f(0, 0);
             Vector2f drawPoint;
-
-            RectangleShape pixel = new RectangleShape {
-				Size = new Vector2f(1, 1),
-				FillColor = new Color(0x44, 0xaa, 0x22),
-			};
 
             while (window.IsOpen) {
                 window.DispatchEvents();
@@ -59,9 +59,11 @@ namespace CSChaosFern.Source {
                 for (int i = 0; i < 100000; i++) {
                     point = NextCoord(point);
                     drawPoint = ViewTransform(point, OFFSET, SCALE);
-                    pixel.Position = drawPoint;
-                    window.Draw(pixel);
+                    image.SetPixel((uint)drawPoint.X, (uint)drawPoint.Y, COLOR);
                 }
+
+                buffer.Update(image);
+                window.Draw(sprite);
                 
                 window.Display();
             }
