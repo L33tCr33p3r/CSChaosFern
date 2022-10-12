@@ -4,9 +4,9 @@ using SFML.Graphics;
 
 namespace CSChaosFern.Source {
     internal static class Program {
-        const int WIDTH = 640;
-        const int HEIGHT = 480;
-        const float SCALE = 80;
+        const int WIDTH = 640 * 2;
+        const int HEIGHT = 480 * 2;
+        const float SCALE = 50;
 
 
         private static Random rand { get; set; } = new Random();
@@ -32,14 +32,23 @@ namespace CSChaosFern.Source {
             return output;
         }
 
+        static Vector2f ViewTransform(Vector2f point, Vector2f offset, float scale = 50) {
+            return new Vector2f( 
+                (scale * point.X) + (WIDTH / 2) + offset.X, 
+                HEIGHT - (scale * point.Y) + offset.Y
+            );
+        }
+
         static public void Main() {
-            RenderWindow window = new RenderWindow(new VideoMode(800, 800), "CSChaosFern");
+            RenderWindow window = new RenderWindow(new VideoMode(WIDTH, HEIGHT), "CSChaosFern");
             window.Closed += new EventHandler(OnClose);
+
+            Vector2f OFFSET = -NextCoord(new Vector2f(0, 0));
             
             Vector2f point = new Vector2f(0, 0);
             Vector2f drawPoint;
 
-            RectangleShape pixel = new RectangleShape() {
+            RectangleShape pixel = new RectangleShape {
 				Size = new Vector2f(1, 1),
 				FillColor = new Color(0x44, 0xaa, 0x22),
 			};
@@ -49,7 +58,7 @@ namespace CSChaosFern.Source {
                 
                 for (int i = 0; i < 100000; i++) {
                     point = NextCoord(point);
-                    drawPoint = new Vector2f((SCALE * point.X) + WIDTH / 2, HEIGHT - (SCALE * point.Y));
+                    drawPoint = ViewTransform(point, OFFSET, SCALE);
                     pixel.Position = drawPoint;
                     window.Draw(pixel);
                 }
